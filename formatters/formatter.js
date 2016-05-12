@@ -4,15 +4,28 @@
 
 
 var formatter = function(){
-    this.collections = [];
+    this.type = "Docmaster_Formatter";
+    this.collections = {};
+    this.enviroments = {};
 };
 
 formatter.prototype = {
     constructor: formatter,
 
-    newCollection: function(name){
-        var collection = new collection();
-        
+    newCollection: function(){
+        return new collection();
+    },
+
+    newFolder: function(){
+        return new folder();
+    },
+
+    newRequest: function(){
+        return new request();
+    },
+
+    newEnviroment: function(){
+        return new enviroment();
     }
 };
 
@@ -22,19 +35,15 @@ module.exports = formatter;
 function collection(){
     this.name;
     this.description;
-    this.folders = [];
-
-
-    this.folder = folder;
-
+    this.folders = {};
 }
 
 function folder(){
     this.name;
     this.description;
+    this.collection_id;
     this.lastRevision = 0;
-    this.requests = [];
-    this.request = request;
+    this.requests = {};
 }
 
 function request(){
@@ -46,4 +55,10 @@ function request(){
     this.method;
     this.data;
     this.dataMode;
+}
+
+function enviroment(){
+    this.name;
+    this.description;
+    this.values = {};
 }
