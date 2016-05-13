@@ -220,9 +220,9 @@ formatPostmanCollection.prototype = {
     _checkPostmanDumpData: function(done){
         var message = null;
 
-        for (var key in this.json){
-            console.log(key);
-        }
+        // for (var key in this.json){
+        //     console.log(key);
+        // }
         if (!this.json.hasOwnProperty("version")){
             message = "Postman data version not set!";
             return done(message);
@@ -287,7 +287,7 @@ formatPostmanCollection.prototype = {
             this.formatFolders(folders);
             this.formatRequests(requests);
             // this.formatter.collections[id].folders = this.formatter.newFolder();
-            
+
         }
 
         done();

@@ -18,5 +18,5 @@ function done(err, res){
         console.log("DONE", err, res.collections["81838fb2-8e1d-25fe-ee3d-16a93429a5da"].folders["286539d9-3c5b-e104-d852-9d23528d31d1"])
     }
 
-    console.log("DONE!", err);
+    console.log("Error!", err);
 }

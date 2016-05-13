@@ -136,6 +136,7 @@ Docmaster.prototype = {
             case "apidoc":
                 
                 new formatApidoc()
+                    .setOutput(this.outputPath)
                     .setFormatter(this.formatStructure)
                     .export(_done);
                 
