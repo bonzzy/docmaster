@@ -9,6 +9,7 @@ var runner = HELPER.runner;
 var formatter = FORMATTER.formatter;
 var path = require('path');
 var fs = require("fs");
+var _ = require("underscore");
 
 var headerTemplate,paramTemplate, mainTemplate;
 
@@ -68,7 +69,7 @@ formatPostmanCollection.prototype = {
         try {
             file = fs.readFileSync(path, 'utf8');
         }catch(err){
-            console.log('FAILED TO OPEN FILE ' + path, err);
+            // console.log('FAILED TO OPEN FILE ' + path, err);
             return done(err);
         }
 
@@ -83,7 +84,7 @@ formatPostmanCollection.prototype = {
 
     saveToFile: function(value, path, done){
         fs.writeFile(path, value, function(err) {
-            console.log("ERR", err)
+            // console.log("ERR", err)
             if(err) {
                 done(err);
             }
@@ -107,28 +108,70 @@ formatPostmanCollection.prototype = {
         for (var name in params){
             var value = params[name];
 
+            if (!value){
+                value = "...";
+            }
+
             template = template.replace("{{"+name+"}}", value);
             template = template.replace("{{"+name+"}}", value);
 
         }
-
-        // if (params.method + " " +params.api_name == "POST /"){
-        //     console.log("laskdjlksajd", template, "________", params)
-        //     process.exit();
-        // }
 
         return template;
     },
 
     getParamsTemplateFromRequest: function (request) {
         var templates = [];
+
+        if (_.isEmpty(request.data)){
+            return "";
+        }
+
+        try{
+            request.data = JSON.parse(request.data)
+        }catch (err){
+            console.log(err, "err")
+        }
+
+        if (request.dataMode == "raw"){
+            var data = [];
+
+            for (var key in request.data){
+
+                var params = {};
+                params.key = key;
+                params.value = request.data[key];
+                params.type = "text";
+                params.enabled = true;
+
+                data.push(params);
+            }
+
+            request.data = data;
+        }
+
         for (var key in request.data){
             var data = request.data[key];
 
+            if (!data){
+                continue;
+            }
+
+
+            if (request.dataMode == "raw"){
+                try{
+                    data.value = JSON.stringify(data.value);
+                }catch (err){
+                }
+            }
+
+            var name = data.key.replace("{{","-").replace("}}","-");
+            var value = data.value.replace("{{","-").replace("}}","-");
+
             var params = {
                 type: data.type,
-                name: data.key,
-                value: data.value
+                name: name,
+                value: value
             };
 
             var template = this.addParamsToTemplate(params, paramTemplate);
@@ -160,14 +203,47 @@ formatPostmanCollection.prototype = {
 
             this.processRequest(collectionPath[folder.name], folder.name,  request)
         }
+
     },
 
     processRequest: function(folderPath, apiGroup, request){
         // folderPath[request.name] = {};
 
+        var response = {};
         var success = {};
         var error = {};
+        var code = 200;
+
         var apiParamsTemplate = this.getParamsTemplateFromRequest(request);
+
+        if (!_.isArray(request.responses)){
+            request.responses = [];
+        }
+
+        if (request.responses.length>0){
+
+            for (var resKey in request.responses){
+                var response = request.responses[resKey];
+
+                if (response.responseCode){
+                    code = parseInt(response.responseCode.code);
+                }
+
+                try{
+                   response.text = JSON.parse(response.text);
+                }catch(err){
+
+                }
+
+                if (code == 200){
+                    success = response.text;
+                }else {
+                    error = response.text;
+                }
+            }
+
+
+        }
 
         var params = {
             method: request.method,
@@ -245,13 +321,10 @@ formatPostmanCollection.prototype = {
     },
 
     _saveApidoc: function(done){
-console.log("____________!!!", "_saveApiDoc")
         var structure = this.files;
         var filePath = structure.root;
 
         this.mkdir(filePath);
-
-        // console.log(this.files.folder.Zipt["ambassadors"])
 
         for (var collectionName in this.files.folder){
             var collection = this.files.folder[collectionName];
@@ -264,49 +337,26 @@ console.log("____________!!!", "_saveApiDoc")
                 // this.mkdir(groupPath);
 
                 var value = "";
+
                 for (var api in group){
                     value += group[api];
                 }
 
                 groupName = groupName.replace("/","-");
 
-                console.log(collectionPath + "/" + groupName+".js");
 
                 this.saveToFile(value, collectionPath + "/" + groupName+".js", function(err, res){});
 
-                // for (var fileName in group){
-                //     this.saveToFile(group[fileName], groupPath + "/" + fileName+".js", function(err, res){});
-                // }
             }
         }
 
 
-        // for (var collectionName in structure.folder){
-        //     var folder = structure.folder;
-        //     var collectionPath = filePath + "/" + collectionName;
-        //
-        //     console.log("OBJECT ", folder);
-        //     this.mkdir(collectionPath);
-        //
-        //     for (var folderName in folder){
-        //         var folderPath = collectionPath + "/" + folderName;
-        //         this.mkdir(folderPath);
-        //
-        //         for (var fileName in folder[folderName]){
-        //             console.log(folder[folderName]);
-        //             this.saveToFile(JSON.stringify(folder[folderName][fileName]), folderPath + "/" + fileName+".js", function(err, res){});
-        //         }
-        //     }
-        //
-        // }
-        // done();
     },
 
     _returnResult: function(done){
         this.formatter.nesto = "Nesto";
         this.result =  this.formatter.nesto;
 
-        // console.log("FILES", this.files.folder.Zipt.ambassadors);
         done();
     }
 };

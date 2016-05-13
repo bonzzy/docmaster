@@ -1,8 +1,7 @@
 /**
- * @api {{{method}}} {{url}} {{api_description}}
+ * @api {{{method}}} {{url}} {{api_name}}
  * @apiName {{api_name}}
  * @apiGroup {{api_group}}
- * @apiVersion {{api_version}}
  * @apiDescription {{api_description}}
  *
  *

@@ -180,6 +180,7 @@ formatPostmanCollection.prototype = {
             var data = request.data;
             var collection_id = request.collectionId;
             var folder_id = request.folder;
+            var responses = request.responses;
 
             if (!folder_id){
                 continue;
@@ -188,7 +189,7 @@ formatPostmanCollection.prototype = {
             var collection = this.formatter.collections[collection_id];
             var folder = collection.folders[folder_id];
 
-            folder.requests = this.formatter.newRequest();
+            folder.requests[id] = this.formatter.newRequest();
 
             folder.requests[id] = this.formatter.newFolder();
             folder.requests[id].name = name;
@@ -198,10 +199,18 @@ formatPostmanCollection.prototype = {
             folder.requests[id].pathVariables = pathVariables;
             folder.requests[id].method = method;
             folder.requests[id].dataMode = dataMode;
-            folder.requests[id].data = data;
+            folder.requests[id].data = data || [];
             folder.requests[id].collection_id = collection_id;
+            folder.requests[id].responses = responses || [];
+
+            if (!_.isArray(data)){
+                console.log("DATA",data);
+
+            }
 
         }
+
+        console.log(collection.folders)
     },
 
 
