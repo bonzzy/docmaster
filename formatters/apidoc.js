@@ -165,6 +165,11 @@ formatPostmanCollection.prototype = {
                 }
             }
 
+            if (!data.value){
+                data.value = "";
+            }
+
+            // console.log("data::", data);
             var name = data.key.replace("{{","-").replace("}}","-");
             var value = data.value.replace("{{","-").replace("}}","-");
 

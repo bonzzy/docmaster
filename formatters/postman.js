@@ -189,6 +189,9 @@ formatPostmanCollection.prototype = {
             var collection = this.formatter.collections[collection_id];
             var folder = collection.folders[folder_id];
 
+            console.log("___________________________",folder_id, collection.folders)
+
+
             folder.requests[id] = this.formatter.newRequest();
 
             folder.requests[id] = this.formatter.newFolder();
@@ -210,7 +213,7 @@ formatPostmanCollection.prototype = {
 
         }
 
-        console.log(collection.folders)
+        // console.log(collection.folders)
     },
 
 
@@ -227,24 +230,37 @@ formatPostmanCollection.prototype = {
     },
 
     _checkPostmanDumpData: function(done){
-        var message = null;
+        var message = [];
 
         // for (var key in this.json){
         //     console.log(key);
         // }
         if (!this.json.hasOwnProperty("version")){
-            message = "Postman data version not set!";
-            return done(message);
+            message.push("Postman data version not set!");
         }
 
         if (!this.json.hasOwnProperty("collections") || (_.isArray(this.json.collections) && this.json.collections.length == 0)){
-            message = "Postman collections is empty!";
-            return done(message);
+            message.push("Postman collections is empty!");
         }
 
         if (!this.json.hasOwnProperty(("environments")) || (_.isArray(this.json.environments) && this.json.environments.length == 0)){
-            message = "Postman enviroment is empty!";
-            return done(message);
+            message.push("Postman enviroment is empty!");
+        }
+
+        if (!this.json.hasOwnProperty("collections") && this.json.hasOwnProperty("name") && this.json.hasOwnProperty("folders")){
+            message = [];
+            this.json.collections = [this.json];
+
+            for (var key in this.json.collections[0].folders){
+                var row = this.json.collections[0].folders[key];
+
+                row.collection_id = this.json.collections[0].id;
+            }
+            console.log("lsakdjsaljdlaksjdlasjdkakdjsa", this.json.collections[0].id)
+        }
+
+        if (message.length > 0){
+            return done(message.join(" "));
         }
 
         done();

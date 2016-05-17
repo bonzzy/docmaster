@@ -8,7 +8,8 @@ var CLASS = global.CLASS;
 var docmaster = new CLASS.docmaster();
 
 docmaster.setEnviroment("rudi_local_zipt");
-docmaster.setInputPath("/Users/tomislavfabeta/work/postmanDocumentation/Backup.postman_dump");
+// docmaster.setInputPath("/Users/tomislavfabeta/work/postmanDocumentation/Backup.postman_dump");
+docmaster.setInputPath("/Users/tomislavfabeta/work/postmanDocumentation/Prepared Zipt Documentation.json");
 docmaster.setOutputPath("/Users/tomislavfabeta/work/postmanDocumentation/OutputDoc/");
 docmaster.setFormat("postman");
 docmaster.export(done);
