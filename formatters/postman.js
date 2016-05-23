@@ -189,9 +189,6 @@ formatPostmanCollection.prototype = {
             var collection = this.formatter.collections[collection_id];
             var folder = collection.folders[folder_id];
 
-            console.log("___________________________",folder_id, collection.folders)
-
-
             folder.requests[id] = this.formatter.newRequest();
 
             folder.requests[id] = this.formatter.newFolder();
@@ -206,14 +203,8 @@ formatPostmanCollection.prototype = {
             folder.requests[id].collection_id = collection_id;
             folder.requests[id].responses = responses || [];
 
-            if (!_.isArray(data)){
-                console.log("DATA",data);
-
-            }
-
         }
 
-        // console.log(collection.folders)
     },
 
 
@@ -256,7 +247,7 @@ formatPostmanCollection.prototype = {
 
                 row.collection_id = this.json.collections[0].id;
             }
-            console.log("lsakdjsaljdlaksjdlasjdkakdjsa", this.json.collections[0].id)
+
         }
 
         if (message.length > 0){

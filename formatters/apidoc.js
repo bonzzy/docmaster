@@ -130,7 +130,6 @@ formatPostmanCollection.prototype = {
         try{
             request.data = JSON.parse(request.data)
         }catch (err){
-            console.log(err, "err")
         }
 
         if (request.dataMode == "raw"){
@@ -355,11 +354,10 @@ formatPostmanCollection.prototype = {
             }
         }
 
-
+        done();
     },
 
     _returnResult: function(done){
-        this.formatter.nesto = "Nesto";
         this.result =  this.formatter.nesto;
 
         done();
