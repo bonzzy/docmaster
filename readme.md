@@ -4,11 +4,10 @@
 
 **Usage**
 
-`docmaster -i path/to/postman-export.json -o path/to/export/`
 
-`cd path/to/`
+`docmaster -i postmanDump.json -o ./exportFolder`
 
-`apidoc -i export/collection-name -o /apidoc`
+`apidoc -i ./exportFolder/collectionName -o ./documentation`
 
 **Description**
 
