@@ -10,6 +10,10 @@
     "type": "git",
     "url": "git+https://github.com/bonzzy/docmaster.git"
   },
+  "bin": {
+    "docmaster": "main.js"
+  },
+  "preferGlobal": "true",
   "author": "Tomislav Fabeta <tomislav.fabeta@gmail.com>",
   "license": "ISC",
   "homepage": "https://github.com/bonzzy/docmaster/wiki",
