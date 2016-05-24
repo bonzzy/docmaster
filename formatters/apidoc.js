@@ -157,18 +157,19 @@ formatPostmanCollection.prototype = {
             }
 
 
-            if (request.dataMode == "raw"){
+            // if (request.dataMode == "raw"){
                 try{
                     data.value = JSON.stringify(data.value);
                 }catch (err){
+                    // data.value = "";
                 }
-            }
+            // }
 
             if (!data.value){
                 data.value = "";
             }
 
-            // console.log("data::", data);
+            // console.log("data::", data, request.dataMode);
             var name = data.key.replace("{{","-").replace("}}","-");
             var value = data.value.replace("{{","-").replace("}}","-");
 
