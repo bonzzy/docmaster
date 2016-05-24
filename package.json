@@ -1,0 +1,28 @@
+{
+  "name": "docmaster",
+  "version": "1.0.2",
+  "description": "Export postman collection to apidoc format",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://tommy_repository@bitbucket.org/tommy_repository/docmaster.git"
+  },
+  "author": "Tomislav Fabeta <tomislav.fabeta@gmail.com>",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/tommy_repository/docmaster#readme",
+  "dependencies": {
+    "fs": "0.0.2",
+    "path": "^0.12.7",
+    "underscore": "^1.8.3"
+  },
+  "devDependencies": {},
+  "keywords": [
+    "postman",
+    "apidoc",
+    "api",
+    "documentation"
+  ]
+}
