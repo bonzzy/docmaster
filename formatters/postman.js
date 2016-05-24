@@ -77,7 +77,7 @@ formatPostmanCollection.prototype = {
             errMessage = type + " name not set";
         }
 
-        if (!folder.hasOwnProperty("collection_id")){
+        if (!folder.hasOwnProperty("collection_id") && !folder.hasOwnProperty("collection")){
             errMessage = type + " collection_id not set";
         }
 
@@ -145,7 +145,7 @@ formatPostmanCollection.prototype = {
             var name = folder.name;
             var description = folder.description;
             var lastRevision = folder.lastRevision;
-            var collection_id = folder.collection_id;
+            var collection_id = folder.collection_id || folder.collection;
 
             var collection = this.formatter.collections[collection_id];
 
@@ -188,6 +188,10 @@ formatPostmanCollection.prototype = {
 
             var collection = this.formatter.collections[collection_id];
             var folder = collection.folders[folder_id];
+
+            if (!folder){
+                continue;
+            }
 
             folder.requests[id] = this.formatter.newRequest();
 
