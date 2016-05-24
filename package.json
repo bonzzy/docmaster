@@ -8,11 +8,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://tommy_repository@bitbucket.org/tommy_repository/docmaster.git"
+    "url": "git+https://github.com/bonzzy/docmaster.git"
   },
   "author": "Tomislav Fabeta <tomislav.fabeta@gmail.com>",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/tommy_repository/docmaster#readme",
+  "homepage": "https://github.com/bonzzy/docmaster/wiki",
   "dependencies": {
     "fs": "0.0.2",
     "path": "^0.12.7",
