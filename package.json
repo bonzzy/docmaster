@@ -1,6 +1,6 @@
 {
   "name": "docmaster",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Export postman collection to apidoc format",
   "main": "main.js",
   "scripts": {
