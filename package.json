@@ -27,6 +27,7 @@
     "postman",
     "apidoc",
     "api",
-    "documentation"
+    "documentation",
+    "doc"
   ]
 }
