@@ -233,9 +233,18 @@ formatPostmanCollection.prototype = {
                 if (response.responseCode){
                     code = parseInt(response.responseCode.code);
                 }
+                if (response.code){
+                    code = parseInt(response.code);
+                }
 
                 try{
                    response.text = JSON.parse(response.text);
+                }catch(err){
+
+                }
+
+                try{
+                    response.text = JSON.parse(response);
                 }catch(err){
 
                 }
@@ -256,13 +265,17 @@ formatPostmanCollection.prototype = {
             api_description: request.description,
             api_name: request.name,
             api_group: apiGroup,
-            api_description: request.description,
+            // api_description: request.description,
             api_headers: this.addParamsToTemplate({value: request.headers}, headerTemplate),
             api_params: apiParamsTemplate,
             api_success: JSON.stringify(success),
             api_error: JSON.stringify(error),
             api_version : "1.0",
         };
+
+        if (request.name =="getclient token braintree"){
+            // console.log(request, request.responses);
+        }
 
         folderPath[request.method + " " +request.name] = this.addParamsToTemplate(params, mainTemplate);
 

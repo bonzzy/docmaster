@@ -12,12 +12,15 @@ if (process.argv.length <= 2){
 var defaultParams = {
     "-o": {description:"Output file", varName:"output"},
     "-i": {description:"Input file", varName:"input"},
-    "-e": {description:"Postman enviroment", varName:"enviroment"},
+    "-env": {description:"Postman environment", varName:"environment"},
+    "-req": {description:"Call all api requests with defined methods (GET,POST,PUT,DEL) (default is '-req GET')", varName:"apiRequestMethods"},
     "--iformat": {description:"Input format", varName:"inputFormat"}
 };
 var params = {
-    "enviroment": null,
-    "inputFormat": "postman"
+    "environment": null,
+    "inputFormat": "postman",
+    "apiRequestMethods": "GET"
+    // "apiRequestMethods": "GET,POST"
 };
 
 for (var i = 2; i<process.argv.length; i++){
@@ -38,15 +41,16 @@ for (var i = 2; i<process.argv.length; i++){
 
 }
 
-if (!params["input"] || !params["output"]){
-    console.log("Missing parameter!");
-    process.exit(-1);
-}
+// if (!params["input"] || !params["output"]){
+//     console.log("Missing parameter!");
+//     process.exit(-1);
+// }
 
-docmaster.setEnviroment(params.enviroment);
+docmaster.setEnvironment(params.environment);
 docmaster.setInputPath(params.input);
 docmaster.setOutputPath(params.output);
 docmaster.setFormat(params.inputFormat);
+docmaster.setApiRequestMethods(params.apiRequestMethods);
 docmaster.export(done);
 
 function done(err, res){
@@ -55,9 +59,9 @@ function done(err, res){
     }else{
         console.log("");
         console.log("Finished!");
-        console.log("__________________");
-        console.log(res);
-        console.log("__________________");
+        // console.log("__________________");
+        // console.log(res);
+        // console.log("__________________");
         console.log("");
     }
 }

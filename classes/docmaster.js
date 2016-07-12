@@ -8,6 +8,7 @@ var FORMATTER = global.FORMATTER;
 var fs = require("fs");
 
 var runner = HELPER.runner;
+
 var formatter = FORMATTER.formatter;
 var formatPostman = FORMATTER.postman;
 var formatApidoc = FORMATTER.apidoc;
@@ -18,12 +19,19 @@ var Docmaster = function(params){
     this.params = params;
     this.formatStructure = {};
     this.format = "postman";
+    this.possibleApiRequestMethods = [
+        "get",
+        "post",
+        "put",
+        "del"
+    ];
+    this.apiRequestMethods = [];
 };
 
 Docmaster.prototype = {
     constructor: Docmaster,
 
-    setEnviroment: function(enviroment){
+    setEnvironment: function(enviroment){
         this.enviroment = enviroment;
         return this;
     },
@@ -41,6 +49,14 @@ Docmaster.prototype = {
     setFormat: function(format){
         if (format){
             this.format = format;
+        }
+
+        return this;
+    },
+
+    setApiRequestMethods: function(apiRequestMethods){
+        if (apiRequestMethods){
+            this.apiRequestMethods = apiRequestMethods.toLowerCase().split(",");
         }
 
         return this;
@@ -117,6 +133,8 @@ Docmaster.prototype = {
             case "postman":
                 new formatPostman()
                     .setData(this.inputJson)
+                    .setEnvironment(this.enviroment)
+                    .setApiRequestsMethods(this.apiRequestMethods)
                     .setFormatter(new formatter())
                     .import(_done);
                 break;

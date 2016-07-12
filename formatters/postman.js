@@ -8,6 +8,8 @@ var _ = require("underscore");
 
 var formatPostmanCollection = function(){
     this.result = {};
+    this.environment = {};
+    this.apiRequestMethods = [];
 
     this._formatPostmanDumpData = [
         this._formatCollections
@@ -27,12 +29,22 @@ formatPostmanCollection.prototype = {
         return this;
     },
 
+    setApiRequestsMethods: function(methods){
+        this.apiRequestMethods = methods || [];
+        return this;
+    },
+
+    setEnvironment: function(environment){
+        this.environment.name = environment;
+        return this;
+    },
+
     import: function(done){
         var self = this;
         var fns = [
             this._checkJsonData,
             this._checkPostmanDumpData,
-            this._formatEnviroments,
+            this._formatEnvironments,
             this._formatPostmanDumpData,
             this._returnResult
         ];
@@ -111,19 +123,19 @@ formatPostmanCollection.prototype = {
         return errMessage;
     },
 
-    checkEnviromentFormat: function (enviroment) {
+    checkEnviromentFormat: function (environment) {
         var type = "Enviroment";
         var errMessage;
 
-        if (!enviroment.hasOwnProperty("id")){
+        if (!environment.hasOwnProperty("id")){
             errMessage = type + " id not set";
         }
 
-        if (!enviroment.hasOwnProperty("name")){
+        if (!environment.hasOwnProperty("name")){
             errMessage = type + " name not set";
         }
 
-        if (!enviroment.hasOwnProperty("values")){
+        if (!environment.hasOwnProperty("values")){
             errMessage = type + " values not set";
         }
 
@@ -158,57 +170,98 @@ formatPostmanCollection.prototype = {
 
     },
 
-    formatRequests: function(requests){
+    formatRequests: function(requests, done){
         var formated = {};
         var folder, collection;
 
+        var fns = [];
+
         for (var key in requests) {
-            var request = requests[key];
+            // var request = requests[key];
 
-            if (this.checkRequestFormat(request)) {
-                continue;
-            }
+            // if (this.checkRequestFormat(request)) {
+            //     continue;
+            // }
+            //
+            // var id = request.id;
+            // var name = request.name;
+            // var description = request.description;
+            // var headers = request.headers;
+            // var url = request.url;
+            // var pathVariables = request.pathVariables;
+            // var method = request.method;
+            // var dataMode = request.dataMode;
+            // var data = request.data;
+            // var collection_id = request.collectionId;
+            // var folder_id = request.folder;
+            // var responses = request.responses;
+            //
+            // if (!folder_id){
+            //     continue;
+            // }
+            //
+            // var collection = this.formatter.collections[collection_id];
+            // var folder = collection.folders[folder_id];
+            //
+            // if (!folder){
+            //     continue;
+            // }
 
-            var id = request.id;
-            var name = request.name;
-            var description = request.description;
-            var headers = request.headers;
-            var url = request.url;
-            var pathVariables = request.pathVariables;
-            var method = request.method;
-            var dataMode = request.dataMode;
-            var data = request.data;
-            var collection_id = request.collectionId;
-            var folder_id = request.folder;
-            var responses = request.responses;
+            var prepareRunnerFunction = function(request, _id){
 
-            if (!folder_id){
-                continue;
-            }
+                return function(next){
 
-            var collection = this.formatter.collections[collection_id];
-            var folder = collection.folders[folder_id];
+                    if (this.checkRequestFormat(request)) {
+                        return next();
+                    }
 
-            if (!folder){
-                continue;
-            }
+                    var id = request.id;
+                    var name = request.name;
+                    var description = request.description;
+                    var headers = request.headers;
+                    var url = request.url;
+                    var pathVariables = request.pathVariables;
+                    var method = request.method;
+                    var dataMode = request.dataMode;
+                    var data = request.data;
+                    var collection_id = request.collectionId;
+                    var folder_id = request.folder;
+                    var responses = request.responses;
 
-            folder.requests[id] = this.formatter.newRequest();
+                    if (!folder_id){
+                        return next();
+                    }
 
-            folder.requests[id] = this.formatter.newFolder();
-            folder.requests[id].name = name;
-            folder.requests[id].description = description;
-            folder.requests[id].headers = headers;
-            folder.requests[id].url = url;
-            folder.requests[id].pathVariables = pathVariables;
-            folder.requests[id].method = method;
-            folder.requests[id].dataMode = dataMode;
-            folder.requests[id].data = data || [];
-            folder.requests[id].collection_id = collection_id;
-            folder.requests[id].responses = responses || [];
+                    var collection = this.formatter.collections[collection_id];
+                    var folder = collection.folders[folder_id];
 
+                    if (!folder){
+                        return next();
+                    }
+
+                    folder.requests[id] = this.formatter.newRequest();
+                    folder.requests[id].name = name;
+                    folder.requests[id].description = description;
+                    folder.requests[id].headers = headers;
+                    folder.requests[id].url = url;
+                    folder.requests[id].pathVariables = pathVariables;
+                    folder.requests[id].method = method;
+                    folder.requests[id].dataMode = dataMode;
+                    folder.requests[id].data = data || [];
+                    folder.requests[id].collection_id = collection_id;
+                    folder.requests[id].responses = responses || [];
+                    folder.requests[id].environment = this.environment || {};
+                    folder.requests[id].executeApiRequests(this.apiRequestMethods, next);
+                    // next();
+                };
+            };
+
+            fns.push(prepareRunnerFunction(requests[key]));
         }
 
+        new runner(fns, this, function(){
+            done();
+        });
     },
 
 
@@ -239,7 +292,7 @@ formatPostmanCollection.prototype = {
         }
 
         if (!this.json.hasOwnProperty(("environments")) || (_.isArray(this.json.environments) && this.json.environments.length == 0)){
-            message.push("Postman enviroment is empty!");
+            message.push("Postman environment is empty!");
         }
 
         if (!this.json.hasOwnProperty("collections") && this.json.hasOwnProperty("name") && this.json.hasOwnProperty("folders")){
@@ -261,24 +314,34 @@ formatPostmanCollection.prototype = {
         done();
     },
 
-    _formatEnviroments: function(done){
-        var enviroments = this.json.enviroments;
+    _formatEnvironments: function(done){
+        var environments = this.json.environments;
+        // console.log("ENV", this.json);
 
-        for (var key in enviroments) {
-            var enviroment = enviroments[key];
+        // console.log(this.json);
+        for (var key in environments) {
+            var environment = environments[key];
 
-            if (this.checkEnviromentFormat(enviroment)) {
+            if (this.checkEnviromentFormat(environment)) {
                 continue;
             }
 
-            var id = enviroment.id;
-            var name = enviroment.name;
-            var values = enviroment.values;
+            var id = environment.id;
+            var name = environment.name;
+            var values = environment.values;
 
-            this.formatter.enviroments[id] = this.formatter.newEnviroment();
-            this.formatter.enviroments[id].id = id;
-            this.formatter.enviroments[id].name = name;
-            this.formatter.enviroments[id].values = values;
+            // console.log("NAME",name, this.environment.name);
+            if (name == this.environment.name){
+                this.environment.values = values;
+                this.environment.id = id;
+                // console.log(this.environment);
+
+            }
+
+            this.formatter.environments[id] = this.formatter.newEnvironment();
+            this.formatter.environments[id].id = id;
+            this.formatter.environments[id].name = name;
+            this.formatter.environments[id].values = values;
         }
 
         done();
@@ -287,6 +350,9 @@ formatPostmanCollection.prototype = {
     _formatCollections: function(done){
         var collections = this.json.collections;
 
+        var fns = [];
+
+
         for (var key in collections){
             var collection = collections[key];
 
@@ -294,23 +360,29 @@ formatPostmanCollection.prototype = {
                 continue;
             }
 
-            var id = collection.id;
-            var name = collection.name;
-            var description = collection.description;
-            var folders = collection.folders;
-            var requests = collection.requests;
+            var prepareCollectionFunction = function(collection){
+                return function(next){
+                    var id = collection.id;
+                    var name = collection.name;
+                    var description = collection.description;
+                    var folders = collection.folders;
+                    var requests = collection.requests;
 
-            this.formatter.collections[id] = this.formatter.newCollection();
-            this.formatter.collections[id].name = name;
-            this.formatter.collections[id].description = description;
+                    console.log("Collection "+name+" has " + folders.length + " folders!");
+                    this.formatter.collections[id] = this.formatter.newCollection();
+                    this.formatter.collections[id].name = name;
+                    this.formatter.collections[id].description = description;
 
-            this.formatFolders(folders);
-            this.formatRequests(requests);
+                    this.formatFolders(folders);
+                    this.formatRequests(requests, next);
+                };
+            };
+
+            fns.push(prepareCollectionFunction(collection));
             // this.formatter.collections[id].folders = this.formatter.newFolder();
-
         }
 
-        done();
+        new runner(fns, this, done);
     },
 
     _returnResult: function(done){
