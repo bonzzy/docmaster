@@ -179,7 +179,9 @@ function executeApiRequest(request, method){
                 try{
                     body = JSON.parse(body);
                     request.responses.push({
-                        responseCode: body.code || body.status,
+                        responseCode: {
+                            code:body.code || body.status
+                        },
                         text: body
                     });
 

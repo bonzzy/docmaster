@@ -232,9 +232,10 @@ formatPostmanCollection.prototype = {
 
                 if (response.responseCode){
                     code = parseInt(response.responseCode.code);
-                }
-                if (response.code){
-                    code = parseInt(response.code);
+                }else{
+                    if (response.code){
+                        code = parseInt(response.code);
+                    }
                 }
 
                 try{
