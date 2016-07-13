@@ -158,6 +158,7 @@ function executeApiRequest(request, method){
             body[row.key] = row.value;
         }
 
+        // console.log(request);
         /**
          * Make Request
          * @type {{url: (*|string), method: *, headers: {}, body, checkServerIdentity: options.checkServerIdentity}}
@@ -172,7 +173,6 @@ function executeApiRequest(request, method){
             }
         };
 
-        // console.log(options);
         function callback(error, response, body) {
             if (body){
 
@@ -194,7 +194,7 @@ function executeApiRequest(request, method){
                         // console.log("WTF", body);
                     }
                 }catch (err){
-                    console.log(err);
+                    console.log("something went wrong", err);
                 }
 
             }
