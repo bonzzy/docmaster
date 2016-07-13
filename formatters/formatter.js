@@ -186,13 +186,7 @@ function executeApiRequest(request, method){
                     });
 
                     console.log("Request: ("+ request.method +") " +request.url+ " is finished!");
-
-                    if (request.name =="getclient token braintree"){
-                        // console.log(request, body, body.code);
-                    }
-                    if (body.code != 200){
-                        // console.log("WTF", body);
-                    }
+                    
                 }catch (err){
                     console.log("something went wrong", err);
                 }

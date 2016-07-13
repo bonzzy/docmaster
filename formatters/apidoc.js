@@ -274,10 +274,6 @@ formatPostmanCollection.prototype = {
             api_version : "1.0",
         };
 
-        if (request.name =="getclient token braintree"){
-            // console.log(request, request.responses);
-        }
-
         folderPath[request.method + " " +request.name] = this.addParamsToTemplate(params, mainTemplate);
 
     },
