@@ -5,7 +5,7 @@
 **Usage**
 
 
-`docmaster -i postmanDump.json -o ./exportFolder`
+`docmaster -i postmanDump.json -o ./exportFolder -env "Postman environment"` 
 
 `apidoc -i ./exportFolder/collectionName -o ./documentation`
 
