@@ -66,12 +66,8 @@ function done(err, res){
     }else{
         console.log("");
         console.log("Finished!");
-        // console.log("__________________");
-        // console.log(res);
-        // console.log("__________________");
         console.log("");
 
-        console.log(params);
         if (params.apidocOutput && params.apidocCollection){
             var apidocCommand = "apidoc -i "+params.output+ params.apidocCollection +" -o " +params.apidocOutput;
             // var apidocCommand = "pwd";
