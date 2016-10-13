@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 
 require("./global/all");
+
+var sys = require('sys')
+var execSync = require('child_process').exec;
 var CLASS = global.CLASS;
 var docmaster = new CLASS.docmaster();
 
@@ -14,12 +17,16 @@ var defaultParams = {
     "-i": {description:"Input file", varName:"input"},
     "-env": {description:"Postman environment", varName:"environment"},
     "-req": {description:"Call all api requests with defined methods (GET,POST,PUT,DEL) (default is '-req GET')", varName:"apiRequestMethods"},
-    "--iformat": {description:"Input format", varName:"inputFormat"}
+    "--iformat": {description:"Input format", varName:"inputFormat"},
+    "-apidocCollection": {description:"Set apidoc input collection name", varName:"apidocCollection"},
+    "-apidocOutput": {description:"Set apidoc output path", varName:"apidocOutput"},
 };
 var params = {
     "environment": null,
     "inputFormat": "postman",
-    "apiRequestMethods": "GET"
+    "apiRequestMethods": "GET",
+    // "apidocCollection": false,
+    // "apidocOutput": false
     // "apiRequestMethods": "GET,POST"
 };
 
@@ -41,10 +48,10 @@ for (var i = 2; i<process.argv.length; i++){
 
 }
 
-// if (!params["input"] || !params["output"]){
-//     console.log("Missing parameter!");
-//     process.exit(-1);
-// }
+if (!params["input"] || !params["output"]){
+    console.log("Missing parameter!");
+    process.exit(-1);
+}
 
 docmaster.setEnvironment(params.environment);
 docmaster.setInputPath(params.input);
@@ -63,5 +70,22 @@ function done(err, res){
         // console.log(res);
         // console.log("__________________");
         console.log("");
+
+        console.log(params);
+        if (params.apidocOutput && params.apidocCollection){
+            var apidocCommand = "apidoc -i "+params.output+ params.apidocCollection +" -o " +params.apidocOutput;
+            // var apidocCommand = "pwd";
+            console.log("");
+            console.log("Command: ", apidocCommand);
+            execSync(apidocCommand, function (error, stdout, stderr) {
+                console.log("");
+                console.log("");
+                console.log(stdout, stderr)
+                if (error !== null) {
+                    console.log('exec error: ' + error);
+                }
+            });
+            // execSync("clear")
+        }
     }
 }

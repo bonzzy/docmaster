@@ -385,6 +385,7 @@ formatPostmanCollection.prototype = {
                 continue;
             }
 
+            this.saveToGlobal('collection', collection.id, collection.name);
             var prepareCollectionFunction = function(collection){
                 return function(next){
                     var id = collection.id;
