@@ -113,7 +113,22 @@ formatPostmanCollection.prototype = {
         }
 
         if (!request.hasOwnProperty("folder")){
-            errMessage = type + " folder not set";
+            for (var folderId in global.namespace.folder){
+                var folder = global.namespace.folder[folderId];
+
+                if (_.isArray(folder.order)){
+                    for (var key in folder.order){
+                        var requestId = folder.order[key];
+                        if (request.id == requestId){
+                            request.folder = folderId;
+                        }
+                    }
+                }
+            }
+
+            if (!request.folder){
+                errMessage = type + " folder not set";
+            }
         }
 
         if (!request.hasOwnProperty("data")){
@@ -142,6 +157,18 @@ formatPostmanCollection.prototype = {
         return errMessage;
     },
 
+    saveToGlobal: function(type, key, value){
+        if (!global.namespace){
+            global.namespace = {};
+        }
+
+        if (!global.namespace[type]){
+            global.namespace[type] = {};
+        }
+
+        global.namespace[type][key] = value;
+    },
+
     formatFolders: function(folders){
         var formated = {};
         var collection;
@@ -166,6 +193,8 @@ formatPostmanCollection.prototype = {
             collection.folders[id].description = description;
             collection.folders[id].lastRevision = lastRevision;
             collection.folders[id].collection_id = collection_id;
+
+            this.saveToGlobal('folder', id, folder);
         }
 
     },
@@ -251,8 +280,9 @@ formatPostmanCollection.prototype = {
                     folder.requests[id].collection_id = collection_id;
                     folder.requests[id].responses = responses || [];
                     folder.requests[id].environment = this.environment || {};
-                    folder.requests[id].executeApiRequests(this.apiRequestMethods, next);
-                    // next();
+
+                    // folder.requests[id].executeApiRequests(this.apiRequestMethods, next);
+                    next();
                 };
             };
 
@@ -280,9 +310,6 @@ formatPostmanCollection.prototype = {
     _checkPostmanDumpData: function(done){
         var message = [];
 
-        // for (var key in this.json){
-        //     console.log(key);
-        // }
         if (!this.json.hasOwnProperty("version")){
             message.push("Postman data version not set!");
         }
@@ -316,7 +343,6 @@ formatPostmanCollection.prototype = {
 
     _formatEnvironments: function(done){
         var environments = this.json.environments;
-        // console.log("ENV", this.json);
 
         // console.log(this.json);
         for (var key in environments) {
@@ -330,7 +356,6 @@ formatPostmanCollection.prototype = {
             var name = environment.name;
             var values = environment.values;
 
-            // console.log("NAME",name, this.environment.name);
             if (name == this.environment.name){
                 this.environment.values = values;
                 this.environment.id = id;

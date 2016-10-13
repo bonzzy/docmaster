@@ -112,8 +112,9 @@ formatPostmanCollection.prototype = {
                 value = "...";
             }
 
-            template = template.replace("{{"+name+"}}", value);
-            template = template.replace("{{"+name+"}}", value);
+            var re = new RegExp("{{"+name+"}}","g");
+
+            template = template.replace(re, value);
 
         }
 
@@ -274,8 +275,11 @@ formatPostmanCollection.prototype = {
             api_version : "1.0",
         };
 
-        folderPath[request.method + " " +request.name] = this.addParamsToTemplate(params, mainTemplate);
+        // console.log(request.url);
+        // console.log(params);
 
+        folderPath[request.method + " " +request.name] = this.addParamsToTemplate(params, mainTemplate);
+// console.log(this.addParamsToTemplate(params, mainTemplate));
     },
 
     /*
