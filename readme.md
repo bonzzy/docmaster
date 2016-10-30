@@ -20,6 +20,7 @@ _4) Use docmaster package to create Apidoc documentation_
 Exporting Postman collection to Apidoc format
 
 `docmaster -i postmanDump.json -o ./exportFolder` 
+
 `apidoc -i ./exportFolder/collectionName -o ./documentation`
 
 
