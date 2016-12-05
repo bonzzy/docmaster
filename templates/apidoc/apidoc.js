@@ -1,6 +1,6 @@
 /**
  * @api {{{method}}} {{url}} {{api_name}}
- * @apiName {{api_name}}
+ * @apiName {{method}}/{{api_name}}
  * @apiGroup {{api_group}}
  * @apiDescription {{api_description}}
  *
