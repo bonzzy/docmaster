@@ -260,7 +260,7 @@ formatPostmanCollection.prototype = {
 
 
         }
-
+        
         var params = {
             method: request.method,
             url: request.url,
